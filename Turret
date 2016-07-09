@@ -1,0 +1,33 @@
+class Turret : ZilchComponent
+{
+    [Property]
+    var Projectile:Archetype = Archetype.Find("Ball");
+    
+    function Initialize(init : CogInitializer)
+    {
+        //Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+        Zero.Connect(this.LevelSettings, Events.MouseDown, this.OnMouseDown);
+    }
+
+    function OnMouseDown(event : ViewportMouseEvent)
+    {
+        var mousePosition = event.ToWorldZPlane(0);
+        
+        var spawnPosition = this.Owner.Transform.Translation;
+        
+        var targetDirection = mousePosition - spawnPosition;
+        
+        var createdProjectile = this.Space.CreateAtPosition(this.Projectile, spawnPosition);
+        
+        targetDirection = Math.Normalize(targetDirection);
+        
+        var fireSpeed = 20.0;
+        var fireVelocity = targetDirection * fireSpeed;
+        
+        createdProjectile.RigidBody.Velocity = fireVelocity;
+    }
+
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+    }
+}
