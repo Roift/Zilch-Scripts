@@ -1,0 +1,28 @@
+class FaceMouse : ZilchComponent
+{
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+    }
+
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        var mouseScreenPosition = Zero.Mouse.ScreenPosition;
+        
+        var worldMousePosition = 
+            this.LevelSettings.CameraViewport. ScreenToWorldZPlane(mouseScreenPosition, 0);
+        
+        var targetRotation = this.Owner.Orientation.GetLookAtPointRotation(worldMousePosition);
+        
+        var currentRotation = this.Owner.Transform.Rotation;
+        
+        var maxTurnDegrees = 10;
+        var partialRotation = Math.RotateTowards(currentRotation, targetRotation, Math.ToRadians(maxTurnDegrees) * event.Dt * 20);
+        
+        this.Owner.Transform.Rotation = partialRotation;
+        
+        var moveSpeed = 4.0;
+        this.Owner.Transform.Translation += this.Owner.Orientation.WorldForward * event.Dt * moveSpeed;
+        
+    }
+}
