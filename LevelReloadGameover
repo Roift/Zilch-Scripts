@@ -1,0 +1,17 @@
+class GameLogic : ZilchComponent
+{
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(Zero.Keyboard, Events.KeyUp, this.OnKeyUp);
+    }
+
+function OnKeyUp(event : KeyboardEvent)
+{
+  // When Space is pressed,
+  if (event.Key == Keys.Space)
+  {
+    // reload the level.
+    this.Space.LoadLevel(Level.Find("Platformer"));
+  }
+}
+}
