@@ -1,0 +1,41 @@
+class EnemyController : ZilchComponent
+{
+    [Property]
+    var MaxMoveDistance: Real = 2.0;
+    var PaceSpeed: Real = 5.0;
+    var PaceDirection: Real3 = Real3(-1.0, 0.0, 0.0);
+    var StartPosition: Real3 = Real3();
+
+    [Dependency]
+    var Transform: Transform = null;
+    function Initialize(init : CogInitializer)
+    {
+        // We need to update the enemy's behavior every logic update
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+        this.StartPosition = this.Owner.Transform.Translation;
+        
+    }
+
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        // Logic for pacing back and forth
+        this.PaceBackAndForth(event);
+    }
+
+    function PaceBackAndForth(event: UpdateEvent)
+    {
+        
+    var displacement = this.Owner.Transform.Translation - this.StartPosition;
+    var distanceFromStart = Math.Length(displacement);
+
+ 
+    if (distanceFromStart >= this.MaxMoveDistance)
+  {
+        this.PaceDirection = -displacement;
+        this.Owner.Sprite.FlipX = !this.Owner.Sprite.FlipX;
+  }
+        this.PaceDirection = Math.Normalize(this.PaceDirection);
+      
+        this.Owner.Transform.Translation += this.PaceDirection * event.Dt * this.PaceSpeed;
+    }
+}
